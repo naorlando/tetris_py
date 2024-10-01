@@ -14,14 +14,13 @@ class World:
         self.columns = 10
         self.cell_size = 30
         self.size = (self.columns * self.cell_size, self.rows * self.cell_size)
-
         self.grid = [[0 for _ in range(self.columns)] for _ in range(self.rows)]
         self.block_offset = [int(self.columns / 2 - 1), 0]
-        self.grid[-1] = [1 for _ in range(self.columns)]
-        self.grid[-1][0] = 0
-        
         self.block = self.generate_block()
         self.next_block = self.generate_block()
+        self.score = 0
+        self.level = 1
+        self.lines_cleared = 0
     
     def move (self, x: int, y: int) -> None:
         """Method that moves the block in the grid.
@@ -46,6 +45,13 @@ class World:
                 if block_element != 0:
                     self.grid[self.block_offset[1] + i][self.block_offset[0] + j] = block_element
         self.block_offset = [int(self.columns / 2 - 1), 0]
+
+    def is_game_over(self):
+        """Checks if the game is over."""
+        for cell in self.grid[0]:
+            if cell != 0:
+                return True
+        return False
         
     def clear_rows (self) -> None:
         """Method that clears the rows that are full.
@@ -142,3 +148,25 @@ class World:
                         pos, 
                         0,
                     )
+
+
+    #Draw retry screen on top of the grid
+    def show_retry_screen(self, screen: pygame.Surface):
+        """Displays the retry screen."""
+        screen.fill(BACKGROUND_COLORS[1])
+        font = pygame.font.Font(None, 74)
+        text = font.render("Game Over", True, (255, 0, 0))
+        screen.blit(text, (300, 200))
+        font = pygame.font.Font(None, 36)
+        text = font.render("Press SPACE to Retry", True, (255, 255, 255))
+        screen.blit(text, (300, 250))
+
+    
+    #stop generatin blocks
+    def stop(self):
+        """Stops the block generation."""
+        self.block = [[0 for _ in range(len(self.block[0]))] for _ in range(len(self.block))]
+        self.next_block = [[0 for _ in range(len(self.next_block[0]))] for _ in range(len(self.next_block))]
+
+
+ 
