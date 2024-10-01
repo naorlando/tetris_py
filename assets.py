@@ -16,11 +16,12 @@ class World:
         self.size = (self.columns * self.cell_size, self.rows * self.cell_size)
 
         self.grid = [[0 for _ in range(self.columns)] for _ in range(self.rows)]
-
+        self.block_offset = [int(self.columns / 2 - 1), 0]
         self.grid[-1] = [1 for _ in range(self.columns)]
         self.grid[-1][0] = 0
         
-        self.new_block()
+        self.block = self.generate_block()
+        self.next_block = self.generate_block()
     
     def move (self, x: int, y: int) -> None:
         """Method that moves the block in the grid.
@@ -75,16 +76,17 @@ class World:
                 if block_element != 0:
                     if self.grid[self.block_offset[1] + i][self.block_offset[0] + j] != 0:
                         return True
-
-    def new_block (self) -> None:
-        """Method that creates a new block in the grid and new collor for the block.
-        """
-        #add collor change by multiplaying the block by a random number
-
-        self.block = random.choice(BLOCKS)
-        #just one color for each new block
+    
+    def generate_block(self):
+        """Genera un nuevo bloque con un color aleatorio."""
+        block = random.choice(BLOCKS)
         color_index = random.randint(1, len(COLORS) - 1)
-        self.block = [[color_index if cell != 0 else 0 for cell in row] for row in random.choice(BLOCKS)]
+        return [[color_index if cell != 0 else 0 for cell in row] for row in block]
+
+    def new_block(self):
+        """Actualiza el bloque actual con el próximo bloque y genera un nuevo próximo bloque."""
+        self.block = self.next_block
+        self.next_block = self.generate_block()
         self.block_offset = [int(self.columns / 2 - 1), 0]
 
 
@@ -123,12 +125,13 @@ class World:
                         0,
                     )
 
-        #Draw next block
+        #Draw next block on the top right
+        next_block_offset = [self.columns + 2, 2]
         for i,block_row in enumerate(self.next_block):
             for j,block_element in enumerate(block_row):
                 pos = (
-                    j * self.cell_size + SCREEN_RESOLUTION[0] / 2 + self.size[0] / 2 + self.cell_size,
-                    i * self.cell_size + SCREEN_RESOLUTION[1] / 2 - self.size[1] / 2 + self.cell_size,
+                    j * self.cell_size + SCREEN_RESOLUTION[0] / 2 - self.size[0] / 2 + next_block_offset[0] * self.cell_size,
+                    i * self.cell_size + SCREEN_RESOLUTION[1] / 2 - self.size[1] / 2 + next_block_offset[1] * self.cell_size,
                     self.cell_size,
                     self.cell_size,
                     )
@@ -139,4 +142,3 @@ class World:
                         pos, 
                         0,
                     )
-

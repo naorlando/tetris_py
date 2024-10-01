@@ -21,7 +21,7 @@ BACKGROUND_COLORS = [LIGHT_BLACK, BLACK]
 
 #Blocks
 
-I_BLOCK = [[1, 1, 1, 1]]
+I_BLOCK = [[1], [1], [1], [1]]
 J_BLOCK = [[1, 0, 0], [1, 1, 1]]
 L_BLOCK = [[0, 0, 1], [1, 1, 1]]
 O_BLOCK = [[1, 1], [1, 1]]
